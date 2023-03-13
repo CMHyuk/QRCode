@@ -1,4 +1,4 @@
-package controller;
+package com.pratice.qrcode.controller;
 
 import com.pratice.qrcode.service.QrCodeService;
 import lombok.RequiredArgsConstructor;
