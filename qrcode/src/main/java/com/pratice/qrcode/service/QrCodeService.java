@@ -1,17 +1,19 @@
 package com.pratice.qrcode.service;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.pratice.qrcode.entity.QrCode;
+import com.pratice.qrcode.exception.QRCodeNotFound;
 import com.pratice.qrcode.repository.QrCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import static com.google.zxing.BarcodeFormat.QR_CODE;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class QrCodeService {
 
     public Long generateAndSaveQrCode(String text) {
         try {
-            BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, 200, 200);
+            BitMatrix bitMatrix = new QRCodeWriter().encode(text, QR_CODE, 200, 200);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
@@ -40,11 +42,8 @@ public class QrCodeService {
     }
 
     public byte[] getQrCodeImageById(Long id) {
-        QrCode qrCode = qrCodeRepository.findById(id).orElse(null);
-        if (qrCode == null) {
-            // ID에 해당하는 QR 코드가 없음
-            return null;
-        }
+        QrCode qrCode = qrCodeRepository.findById(id)
+                .orElseThrow(QRCodeNotFound::new);
 
         return qrCode.getQrCodeImage();
     }

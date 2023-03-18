@@ -22,11 +22,6 @@ public class QrCodeController {
     @GetMapping(value = "/qrcode/{id}", produces = IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getQrCodeImageById(@PathVariable Long id) {
         byte[] qrCodeImage = qrCodeService.getQrCodeImageById(id);
-        if (qrCodeImage == null) {
-            // ID에 해당하는 QR 코드가 없음
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(qrCodeImage);
     }
 
@@ -36,11 +31,6 @@ public class QrCodeController {
 
         // ID에 해당하는 QR 코드 이미지를 가져옴
         byte[] qrCodeImage = qrCodeService.getQrCodeImageById(id);
-        if (qrCodeImage == null) {
-            // ID에 해당하는 QR 코드가 없음
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(qrCodeImage);
     }
 
@@ -50,10 +40,6 @@ public class QrCodeController {
 
         // ID에 해당하는 QR 코드 이미지를 가져옴
         byte[] qrCodeImage = qrCodeService.getQrCodeImageById(id);
-        if (qrCodeImage == null) {
-            // ID에 해당하는 QR 코드가 없음
-            return ResponseEntity.notFound().build();
-        }
 
         // Base64 문자열로 변환하여 반환
         String base64Image = Base64.getEncoder().encodeToString(qrCodeImage);
