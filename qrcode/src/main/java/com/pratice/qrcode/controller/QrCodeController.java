@@ -1,5 +1,6 @@
 package com.pratice.qrcode.controller;
 
+import com.google.zxing.WriterException;
 import com.pratice.qrcode.service.QrCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Base64;
 
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
@@ -26,7 +28,7 @@ public class QrCodeController {
     }
 
     @GetMapping(value = "/qrcode", produces = IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> generateAndSaveQrCode(@RequestParam String text) {
+    public ResponseEntity<byte[]> generateAndSaveQrCode(@RequestParam String text) throws IOException, WriterException {
         Long id = qrCodeService.generateAndSaveQrCode(text);
 
         // ID에 해당하는 QR 코드 이미지를 가져옴
@@ -35,7 +37,7 @@ public class QrCodeController {
     }
 
     @GetMapping(value = "/qrcode/base64", produces = TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> generateAndSaveQrCodeAsBase64(@RequestParam String text) {
+    public ResponseEntity<String> generateAndSaveQrCodeAsBase64(@RequestParam String text) throws IOException, WriterException {
         Long id = qrCodeService.generateAndSaveQrCode(text);
 
         // ID에 해당하는 QR 코드 이미지를 가져옴

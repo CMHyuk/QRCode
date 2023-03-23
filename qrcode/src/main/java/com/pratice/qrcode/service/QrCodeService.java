@@ -9,6 +9,7 @@ import com.pratice.qrcode.exception.QRCodeNotFound;
 import com.pratice.qrcode.repository.QrCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,29 +17,25 @@ import java.io.IOException;
 import static com.google.zxing.BarcodeFormat.QR_CODE;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class QrCodeService {
 
     private final QrCodeRepository qrCodeRepository;
 
-    public Long generateAndSaveQrCode(String text) {
-        try {
-            BitMatrix bitMatrix = new QRCodeWriter().encode(text, QR_CODE, 200, 200);
+    public Long generateAndSaveQrCode(String text) throws WriterException, IOException {
+        BitMatrix bitMatrix = new QRCodeWriter().encode(text, QR_CODE, 200, 200);
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
 
-            byte[] qrCodeImage = outputStream.toByteArray();
+        byte[] qrCodeImage = outputStream.toByteArray();
 
-            QrCode qrCode = new QrCode();
-            qrCode.setText(text);
-            qrCode.setQrCodeImage(qrCodeImage);
+        QrCode qrCode = new QrCode();
+        qrCode.setText(text);
+        qrCode.setQrCodeImage(qrCodeImage);
 
-            return qrCodeRepository.save(qrCode).getId();
-        } catch (WriterException | IOException e) {
-            // QR 코드 생성 실패
-            throw new IllegalArgumentException();
-        }
+        return qrCodeRepository.save(qrCode).getId();
     }
 
     public byte[] getQrCodeImageById(Long id) {
