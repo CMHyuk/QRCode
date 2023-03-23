@@ -23,6 +23,7 @@ public class QrCodeService {
 
     private final QrCodeRepository qrCodeRepository;
 
+    @Transactional
     public Long generateAndSaveQrCode(String text) throws WriterException, IOException {
         BitMatrix bitMatrix = new QRCodeWriter().encode(text, QR_CODE, 200, 200);
 
